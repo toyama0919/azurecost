@@ -3,38 +3,28 @@
 [![PyPI version](https://badge.fury.io/py/azurecost.svg)](https://badge.fury.io/py/azurecost)
 [![Build Status](https://github.com/toyama0919/azurecost/actions/workflows/tests.yml/badge.svg?branch=main)(https://github.com/toyama0919/azurecost/actions/workflows/tests.yml)
 
-Command Line utility for Amazon Aurora.
+Simple and easy command line to view azure costs.
 
 Support python3 only. (use boto3)
 
 ## Settings
 
 ```sh
-export AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXXXXXX
-export AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-export AWS_DEFAULT_REGION=xx-xxxxxxx-x
+az login
 ```
-
-* support environment variables and iam role.
 
 ## Examples
 
 #### list instance and cluster
 
 ```bash
-$ azurecost list
-
-[instances]
-db01 mysql available db.m3.xlarge  ap-northeast-1c None
-db02 mysql available db.m3.xlarge  ap-northeast-1c None
-db03 mysql available db.m3.large ap-northeast-1c None
-db04 mysql available db.m3.large ap-northeast-1c None
-db05 aurora available db.t2.medium  ap-northeast-1c aurora-cluster
-db06 aurora available db.t2.medium  ap-northeast-1c aurora-cluster
-
-[clusters]
-aurora-cluster available aurora  ['db05', 'db06']
-...
+$ azurecost -s my-subscription                                                                                                   1 ↵
+key                   2023-08    2023-09
+------------------  ---------  ---------
+total                  492.77      80.28
+Cognitive Services     492.77      80.28
+Bandwidth                0          0
+Storage                  0          0
 ```
 
 ## Installation
