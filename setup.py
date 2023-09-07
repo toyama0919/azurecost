@@ -29,9 +29,5 @@ setup(
     install_requires=install_requires,
     extras_require=extras_require,
     tests_require=extras_require["test"],
-    entry_points={
-        "console_scripts": [
-            "azurecost=azurecost.commands:main"
-        ]
-    },
+    entry_points={"console_scripts": ["azurecost=azurecost.commands:main"]},
 )

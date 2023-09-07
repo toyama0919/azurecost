@@ -12,14 +12,28 @@ class Mash(object):
 @click.option("--debug/--no-debug", default=False, help="enable debug logging")
 @click.option("--subscription", "-s", type=str, required=True, help="gcp project id.")
 @click.option("--resource-group", "-r", type=str, help="resource group.")
-@click.option("--dimensions", "-d", multiple=True, default=constants.DEFAULT_DIMENSIONS, help="dimensions.")
-@click.option("--granularity", "-g", type=str, default=constants.DEFAULT_GRANULARITY, help="granularity.")
+@click.option(
+    "--dimensions",
+    "-d",
+    multiple=True,
+    default=constants.DEFAULT_DIMENSIONS,
+    help="dimensions.",
+)
+@click.option(
+    "--granularity",
+    "-g",
+    type=str,
+    default=constants.DEFAULT_GRANULARITY,
+    help="granularity.",
+)
 @click.option("--ago", "-a", type=int, default=constants.DEFAULT_AGO, help="ago.")
 @click.option(
     "--version/--no-version", "-v", default=False, help="show version. (default: False)"
 )
 @click.pass_context
-def cli(ctx, debug, subscription, resource_group, dimensions, granularity, ago, version):
+def cli(
+    ctx, debug, subscription, resource_group, dimensions, granularity, ago, version
+):
     if version:
         print(constants.VERSION)
         sys.exit()
