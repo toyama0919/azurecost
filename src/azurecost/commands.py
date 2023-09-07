@@ -23,8 +23,8 @@ def cli(ctx, debug, subscription, resource_group, dimensions, granularity, ago, 
     if version:
         print(constants.VERSION)
         sys.exit()
-    core = Core(debug, granularity)
-    total_results, results = core.get_usage(subscription, resource_group, dimensions, ago)
+    core = Core(debug, granularity, dimensions)
+    total_results, results = core.get_usage(subscription, resource_group, ago)
     print(core.convert_tabulate(total_results, results))
 
 

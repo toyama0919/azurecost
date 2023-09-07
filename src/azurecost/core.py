@@ -13,24 +13,27 @@ from .date_util import DateUtil
 
 
 class Core:
-    def __init__(self, debug, granularity: str = constants.DEFAULT_GRANULARITY):
-        self.subscription_client = SubscriptionClient(
-            credential=AzureCliCredential()
-        )
+    def __init__(
+        self,
+        debug,
+        granularity: str = constants.DEFAULT_GRANULARITY,
+        dimensions: list = constants.DEFAULT_DIMENSIONS,
+    ):
+        self.subscription_client = SubscriptionClient(credential=AzureCliCredential())
         self.cost_management_client = CostManagementClient(
             credential=AzureCliCredential()
         )
         self.logger = get_logger(debug)
         self.granularity = granularity
+        self.dimensions = dimensions
 
     @retry(stop_max_attempt_number=1, wait_fixed=10000)
     def get_usage(
-            self,
-            subscription_name: str,
-            resource_group: str = None,
-            dimensions: list = constants.DEFAULT_DIMENSIONS,
-            ago: int = constants.DEFAULT_AGO,
-        ):
+        self,
+        subscription_name: str,
+        resource_group: str = None,
+        ago: int = constants.DEFAULT_AGO,
+    ):
         subscription = self.get_subscription_from_name(subscription_name)
 
         start, end = DateUtil.get_start_and_end(self.granularity, ago)
@@ -47,30 +50,25 @@ class Core:
             "dataset": {
                 "granularity": self.granularity,
                 "aggregation": {
-                    "totalCost": {"name": "PreTaxCost", "function": "Sum"},
+                    "totalCost": {"name": "Cost", "function": "Sum"},
                 },
-            }
+            },
         }
         self.logger.debug(f"{start} - {end}")
 
         # total_cost
         usage = self.cost_management_client.query.usage(scope, payload)
-        total_results = usage.rows
+        columns = list(map(lambda col: col.name, usage.columns))
+        total_results = [dict(zip(columns, row)) for row in usage.rows]
         self.logger.debug(total_results)
 
+        # cost by dimensions
         payload["dataset"]["grouping"] = [
-            {
-                "type": "Dimension",
-                "name": d
-            }
-            for d in dimensions
+            {"type": "Dimension", "name": d} for d in self.dimensions
         ]
         usage = self.cost_management_client.query.usage(scope, payload)
-        results = []
-        for row in usage.rows:
-            dimension_values = ",".join(row[2:2+len(dimensions)])
-            results.append([row[0], row[1], dimension_values])
-
+        columns = list(map(lambda col: col.name, usage.columns))
+        results = [dict(zip(columns, row)) for row in usage.rows]
         self.logger.debug(results)
 
         return total_results, results
@@ -86,14 +84,19 @@ class Core:
         format_date = "%Y-%m" if self.granularity == "MONTHLY" else "%Y-%m-%d"
 
         for result in total_results:
-            d = datetime.strptime(result[1], '%Y-%m-%dT%H:%M:%S').strftime(format_date)
+            d = datetime.strptime(result["BillingMonth"], "%Y-%m-%dT%H:%M:%S").strftime(
+                format_date
+            )
             # 小数点を2桁にする
-            dd["total"][d] = round(result[0], 2)
+            dd["total"][d] = round(result["Cost"], 2)
 
         for result in results:
-            d = datetime.strptime(result[1], '%Y-%m-%dT%H:%M:%S').strftime(format_date)
+            d = datetime.strptime(result["BillingMonth"], "%Y-%m-%dT%H:%M:%S").strftime(
+                format_date
+            )
             # 小数点を2桁にする
-            dd[result[2]][d] = round(result[0], 2)
+            dimensions = ", ".join([result[dimension] for dimension in self.dimensions])
+            dd[dimensions][d] = round(result["Cost"], 2)
 
         costs = []
         for key, sum_costs in dd.items():
