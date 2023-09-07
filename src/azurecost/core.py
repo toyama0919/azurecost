@@ -81,18 +81,20 @@ class Core:
 
     def convert_tabulate(self, total_results: list, results: list):
         dd = defaultdict(lambda: {})
-        format_date = "%Y-%m" if self.granularity == "MONTHLY" else "%Y-%m-%d"
+        view_format_date = "%Y-%m" if self.granularity == "MONTHLY" else "%Y-%m-%d"
+        format_date = "%Y-%m-%dT%H:%M:%S" if self.granularity == "MONTHLY" else "%Y%m%d"
+        date_key = "BillingMonth" if self.granularity == "MONTHLY" else "UsageDate"
 
         for result in total_results:
-            d = datetime.strptime(result["BillingMonth"], "%Y-%m-%dT%H:%M:%S").strftime(
-                format_date
+            d = datetime.strptime(str(result[date_key]), format_date).strftime(
+                view_format_date
             )
             # Set the decimal point to two digits.
             dd["total"][d] = round(result["Cost"], 2)
 
         for result in results:
-            d = datetime.strptime(result["BillingMonth"], "%Y-%m-%dT%H:%M:%S").strftime(
-                format_date
+            d = datetime.strptime(str(result[date_key]), format_date).strftime(
+                view_format_date
             )
             # Set the decimal point to two digits.
             dimensions = ", ".join([result[dimension] for dimension in self.dimensions])
