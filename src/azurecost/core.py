@@ -49,7 +49,6 @@ class Core:
                 "aggregation": {
                     "totalCost": {"name": "PreTaxCost", "function": "Sum"},
                 },
-                # "grouping": grouping
             }
         }
         self.logger.debug(f"{start} - {end}")
@@ -67,7 +66,11 @@ class Core:
             for d in dimensions
         ]
         usage = self.cost_management_client.query.usage(scope, payload)
-        results = usage.rows
+        results = []
+        for row in usage.rows:
+            dimension_values = ",".join(row[2:2+len(dimensions)])
+            results.append([row[0], row[1], dimension_values])
+
         self.logger.debug(results)
 
         return total_results, results
