@@ -87,14 +87,14 @@ class Core:
             d = datetime.strptime(result["BillingMonth"], "%Y-%m-%dT%H:%M:%S").strftime(
                 format_date
             )
-            # 小数点を2桁にする
+            # Set the decimal point to two digits.
             dd["total"][d] = round(result["Cost"], 2)
 
         for result in results:
             d = datetime.strptime(result["BillingMonth"], "%Y-%m-%dT%H:%M:%S").strftime(
                 format_date
             )
-            # 小数点を2桁にする
+            # Set the decimal point to two digits.
             dimensions = ", ".join([result[dimension] for dimension in self.dimensions])
             dd[dimensions][d] = round(result["Cost"], 2)
 
@@ -104,10 +104,10 @@ class Core:
             d.update(sum_costs)
             costs.append(d)
 
-        # 最近の月を取得
+        # Get the most recent month
         last_time = list(costs[0].keys())[-1]
 
-        # 最近の月でソート
+        # Sort by most recent month
         converts = sorted(
             costs,
             key=lambda x: 0 if x.get(last_time) is None else x.get(last_time),
