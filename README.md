@@ -15,10 +15,10 @@ az login
 
 ## Examples
 
-#### list instance and cluster
+#### show cost monthly
 
 ```bash
-$ azurecost -s my-subscription                                                                                                   1 ↵
+$ azurecost -s my-subscription
 key                   2023-08    2023-09
 ------------------  ---------  ---------
 total                  492.77      80.28
@@ -26,6 +26,24 @@ Cognitive Services     492.77      80.28
 Bandwidth                0          0
 Storage                  0          0
 ```
+
+#### show cost (Multiple Dimensions)
+
+```
+$ azurecost -s my-subscription -d ResourceGroup -d ServiceName
+key                                     2023-08    2023-09
+------------------------------------  ---------  ---------
+total                                    492.77     426.97
+RG-1, Cognitive Services                 281        366
+RG-2, Cognitive Services                 211.77      60.97
+RG-3, Storage                              0          0
+RG-4, Storage                              0          0
+RG-5, Storage                              0          0
+RG-6, Storage                              0          0
+RG-7, Bandwidth                            0          0
+RG-7, Storage                              0          0
+```
+
 
 ## Installation
 
