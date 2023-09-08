@@ -15,6 +15,7 @@ class Mash(object):
 @click.option(
     "--dimensions",
     "-d",
+    type=click.Choice(constants.AVAILABLE_DIMENSIONS),
     multiple=True,
     default=constants.DEFAULT_DIMENSIONS,
     help="dimensions.",
@@ -22,7 +23,7 @@ class Mash(object):
 @click.option(
     "--granularity",
     "-g",
-    type=str,
+    type=click.Choice(constants.AVAILABLE_GRANULARITY),
     default=constants.DEFAULT_GRANULARITY,
     help="granularity.",
 )
