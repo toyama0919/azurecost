@@ -6,6 +6,7 @@ from retrying import retry
 from collections import defaultdict
 from datetime import datetime
 from tabulate import tabulate
+import os
 
 from .logger import get_logger
 from . import constants
@@ -34,12 +35,16 @@ class Core:
         resource_group: str = None,
         ago: int = constants.DEFAULT_AGO,
     ):
-        subscription = self.get_subscription_from_name(subscription_name)
+        subscription_id = (
+            self.get_subscription_from_name(subscription_name).subscription_id
+            if os.environ.get("AZURE_SUBSCRIPTION_ID") is None
+            else os.environ.get("AZURE_SUBSCRIPTION_ID")
+        )
 
         start, end = DateUtil.get_start_and_end(self.granularity, ago)
         def_period = QueryTimePeriod(from_property=start, to=end)
 
-        scope = "/subscriptions/" + subscription.subscription_id
+        scope = "/subscriptions/" + subscription_id
         if resource_group is not None:
             scope += "/resourceGroups/" + resource_group
 

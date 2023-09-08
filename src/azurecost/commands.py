@@ -10,7 +10,7 @@ class Mash(object):
 
 @click.group(invoke_without_command=True)
 @click.option("--debug/--no-debug", default=False, help="enable debug logging")
-@click.option("--subscription", "-s", type=str, required=True, help="gcp project id.")
+@click.option("--subscription", "-s", type=str, help="subscription display name.")
 @click.option("--resource-group", "-r", type=str, help="resource group.")
 @click.option(
     "--dimensions",
