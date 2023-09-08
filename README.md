@@ -1,7 +1,7 @@
 # azurecost
 
 [![PyPI version](https://badge.fury.io/py/azurecost.svg)](https://badge.fury.io/py/azurecost)
-[![Build Status](https://github.com/toyama0919/azurecost/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/toyama0919/azurecost/actions/workflows/tests.yml)
+[![Build Status](https://github.com/toyama0919/azurecost/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/toyama0919/azurecost/actions/workflows/ci.yml)
 
 Simple and easy command line to view azure costs.
 
