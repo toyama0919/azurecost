@@ -27,6 +27,8 @@ Bandwidth                0          0
 Storage                  0          0
 ```
 
+* You can omit the -s by specifying the environment variable AZURE_SUBSCRIPTION_ID.
+
 #### show cost (Multiple Dimensions)
 
 ```
