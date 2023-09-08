@@ -5,7 +5,7 @@ install-test() {
 }
 
 run-test() {
-  tox -e black-check
+  tox -e black
   tox -e flake8
   # tox -e pytest
 }
