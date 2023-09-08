@@ -8,14 +8,15 @@ extras_require = {"test": ["tox"]}
 setup(
     name="azurecost",
     version="0.1.0",
-    description="Command Line utility for cost of aws.",
+    description="Simple and easy command line to view azure costs.",
     long_description=open(os.path.join(here, "README.md")).read(),
     long_description_content_type="text/markdown",
     classifiers=[
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     keywords="azurecost tool aws",
     author="Hiroshi Toyama",
