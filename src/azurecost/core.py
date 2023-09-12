@@ -36,7 +36,7 @@ class Core:
         ago: int = constants.DEFAULT_AGO,
     ):
         subscription_id = (
-            self.get_subscription_from_name(subscription_name).subscription_id
+            self._get_subscription_from_name(subscription_name).subscription_id
             if os.environ.get("AZURE_SUBSCRIPTION_ID") is None
             else os.environ.get("AZURE_SUBSCRIPTION_ID")
         )
@@ -78,12 +78,6 @@ class Core:
 
         return total_results, results
 
-    def get_subscription_from_name(self, subscription_name: str):
-        for subscription in self.subscription_client.subscriptions.list():
-            if subscription.display_name != subscription_name:
-                continue
-            return subscription
-
     def convert_tabulate(self, total_results: list, results: list):
         dd = defaultdict(lambda: {})
         view_format_date = "%Y-%m" if self.granularity == "MONTHLY" else "%Y-%m-%d"
@@ -121,3 +115,9 @@ class Core:
             reverse=True,
         )
         return tabulate(converts, headers="keys")
+
+    def _get_subscription_from_name(self, subscription_name: str):
+        for subscription in self.subscription_client.subscriptions.list():
+            if subscription.display_name != subscription_name:
+                continue
+            return subscription
