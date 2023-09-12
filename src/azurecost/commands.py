@@ -40,7 +40,7 @@ def cli(
         sys.exit()
     core = Core(debug, granularity, dimensions)
     total_results, results = core.get_usage(subscription, resource_group, ago)
-    print(core.convert_tabulate(total_results, results))
+    click.echo(core.convert_tabulate(total_results, results))
 
 
 def main():
