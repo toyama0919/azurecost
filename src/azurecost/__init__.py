@@ -1,5 +1,5 @@
 from .core import Core
 
 
-class azurecost(Core):
+class Azurecost(Core):
     pass
