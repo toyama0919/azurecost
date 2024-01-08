@@ -26,7 +26,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-    keywords="azurecost tool",
+    keywords="azure cost tool costmanagement",
     author="Hiroshi Toyama",
     author_email="toyama0919@gmail.com",
     url="https://github.com/toyama0919/azurecost",
