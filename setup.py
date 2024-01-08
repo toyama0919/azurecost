@@ -6,10 +6,10 @@ install_requires = [
     "tabulate",
     "click>=7.0",
     "retrying",
-    "azure-identity==1.14.0",
-    "azure-mgmt-core==1.4.0",
-    "azure-mgmt-costmanagement==4.0.1",
-    "azure-mgmt-resource==23.0.1",
+    "azure-identity",
+    "azure-mgmt-core",
+    "azure-mgmt-costmanagement",
+    "azure-mgmt-resource",
 ]
 extras_require = {"test": ["tox"]}
 
