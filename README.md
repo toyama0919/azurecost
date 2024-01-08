@@ -46,6 +46,18 @@ RG-7, Bandwidth                            0          0
 RG-7, Storage                              0          0
 ```
 
+## Python API
+
+```py
+subscription = "my-subscription"
+core = Azurecost(False, "MONTHLY", ["ServiceName"])
+total_results, results = core.get_usage(
+    ago=2,
+    subscription_name=subscription
+)
+text = core.convert_tabulate(total_results, results)
+print(text)
+```
 
 ## Installation
 
