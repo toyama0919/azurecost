@@ -2,12 +2,20 @@ from setuptools import setup, find_packages
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
-install_requires = ["tabulate", "boto3", "click>=7.0", "retrying"]
+install_requires = [
+  "tabulate",
+  "click>=7.0",
+  "retrying",
+  "azure-identity==1.14.0",
+  "azure-mgmt-core==1.4.0",
+  "azure-mgmt-costmanagement==4.0.1",
+  "azure-mgmt-resource==23.0.1",
+]
 extras_require = {"test": ["tox"]}
 
 setup(
     name="azurecost",
-    version="0.1.0",
+    version="0.1.1",
     description="Simple and easy command line to view azure costs.",
     long_description=open(os.path.join(here, "README.md")).read(),
     long_description_content_type="text/markdown",
@@ -18,7 +26,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
     ],
-    keywords="azurecost tool aws",
+    keywords="azurecost tool",
     author="Hiroshi Toyama",
     author_email="toyama0919@gmail.com",
     url="https://github.com/toyama0919/azurecost",
