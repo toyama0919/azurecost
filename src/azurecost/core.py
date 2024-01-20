@@ -1,4 +1,4 @@
-from azure.identity import AzureCliCredential
+from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import SubscriptionClient
 from azure.mgmt.costmanagement import CostManagementClient
 from azure.mgmt.costmanagement.models import QueryTimePeriod
@@ -20,9 +20,10 @@ class Core:
         granularity: str = constants.DEFAULT_GRANULARITY,
         dimensions: list = constants.DEFAULT_DIMENSIONS,
     ):
-        self.subscription_client = SubscriptionClient(credential=AzureCliCredential())
+        credential = DefaultAzureCredential()
+        self.subscription_client = SubscriptionClient(credential=credential)
         self.cost_management_client = CostManagementClient(
-            credential=AzureCliCredential()
+            credential=credential
         )
         self.logger = get_logger(debug)
         self.granularity = granularity
