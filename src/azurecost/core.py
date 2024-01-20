@@ -31,7 +31,7 @@ class Core:
     @retry(stop_max_attempt_number=1, wait_fixed=10000)
     def get_usage(
         self,
-        subscription_name: str,
+        subscription_name: str = None,
         resource_group: str = None,
         ago: int = constants.DEFAULT_AGO,
     ):
