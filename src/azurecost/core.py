@@ -22,9 +22,7 @@ class Core:
     ):
         credential = DefaultAzureCredential()
         self.subscription_client = SubscriptionClient(credential=credential)
-        self.cost_management_client = CostManagementClient(
-            credential=credential
-        )
+        self.cost_management_client = CostManagementClient(credential=credential)
         self.logger = get_logger(debug)
         self.granularity = granularity
         self.dimensions = dimensions
