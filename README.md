@@ -53,7 +53,8 @@ subscription = "my-subscription"
 core = Azurecost(False, "MONTHLY", ["ServiceName"])
 total_results, results = core.get_usage(
     ago=2,
-    subscription_name=subscription
+    subscription_name=subscription,
+    # resource_group="my-rg"
 )
 text = core.convert_tabulate(total_results, results)
 print(text)
