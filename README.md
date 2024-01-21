@@ -5,7 +5,7 @@
 
 Simple and easy command line to view azure costs.
 
-Support python3 only. (use boto3)
+Support python3 only.
 
 ## Settings
 
