@@ -40,7 +40,6 @@ class Core:
         self,
         ago: int = constants.DEFAULT_AGO,
     ):
-
         start, end = DateUtil.get_start_and_end(self.granularity, ago)
         def_period = QueryTimePeriod(from_property=start, to=end)
 
