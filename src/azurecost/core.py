@@ -19,6 +19,8 @@ class Core:
         debug,
         granularity: str = constants.DEFAULT_GRANULARITY,
         dimensions: list = constants.DEFAULT_DIMENSIONS,
+        subscription_name: str = None,
+        resource_group: str = None,
     ):
         credential = DefaultAzureCredential()
         self.subscription_client = SubscriptionClient(credential=credential)
@@ -26,26 +28,25 @@ class Core:
         self.logger = get_logger(debug)
         self.granularity = granularity
         self.dimensions = dimensions
-
-    @retry(stop_max_attempt_number=1, wait_fixed=10000)
-    def get_usage(
-        self,
-        subscription_name: str = None,
-        resource_group: str = None,
-        ago: int = constants.DEFAULT_AGO,
-    ):
-        subscription_id = (
+        self.subscription_id = (
             self._get_subscription_from_name(subscription_name).subscription_id
             if os.environ.get("AZURE_SUBSCRIPTION_ID") is None
             else os.environ.get("AZURE_SUBSCRIPTION_ID")
         )
+        self.resource_group = resource_group
+
+    @retry(stop_max_attempt_number=1, wait_fixed=10000)
+    def get_usage(
+        self,
+        ago: int = constants.DEFAULT_AGO,
+    ):
 
         start, end = DateUtil.get_start_and_end(self.granularity, ago)
         def_period = QueryTimePeriod(from_property=start, to=end)
 
-        scope = "/subscriptions/" + subscription_id
-        if resource_group is not None:
-            scope += "/resourceGroups/" + resource_group
+        scope = "/subscriptions/" + self.subscription_id
+        if self.resource_group is not None:
+            scope += "/resourceGroups/" + self.resource_group
 
         payload = {
             "type": "ActualCost",
@@ -99,8 +100,11 @@ class Core:
             dd[dimensions][d] = round(result["Cost"], 2)
 
         costs = []
-        for key, sum_costs in dd.items():
-            d = {"key": key}
+        for raw_key, sum_costs in dd.items():
+            key = raw_key.replace(f"/subscriptions/{self.subscription_id}", "")
+            if self.resource_group is not None:
+                key = key.replace(f"/resourcegroups/{self.resource_group}", "")
+            d = {"key": key.replace(f"/subscriptions/{self.subscription_id}", "")}
             d.update(sum_costs)
             costs.append(d)
 

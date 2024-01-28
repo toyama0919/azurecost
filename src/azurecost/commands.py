@@ -38,8 +38,8 @@ def cli(
     if version:
         print(constants.VERSION)
         sys.exit()
-    core = Core(debug, granularity, dimensions)
-    total_results, results = core.get_usage(subscription, resource_group, ago)
+    core = Core(debug, granularity, dimensions, subscription, resource_group)
+    total_results, results = core.get_usage(ago)
     click.echo(core.convert_tabulate(total_results, results))
 
 
