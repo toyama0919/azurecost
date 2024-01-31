@@ -50,11 +50,15 @@ RG-7, Storage                              0          0
 
 ```py
 subscription = "my-subscription"
-core = Azurecost(False, "MONTHLY", ["ServiceName"])
-total_results, results = core.get_usage(
-    ago=2,
+core = Azurecost(
+    False,
+    "MONTHLY",
+    ["ServiceName"],
     subscription_name=subscription,
     # resource_group="my-rg"
+)
+total_results, results = core.get_usage(
+    ago=2,
 )
 text = core.convert_tabulate(total_results, results)
 print(text)
