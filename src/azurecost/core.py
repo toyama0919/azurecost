@@ -2,7 +2,6 @@ from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import SubscriptionClient
 from azure.mgmt.costmanagement import CostManagementClient
 from azure.mgmt.costmanagement.models import QueryTimePeriod
-from retrying import retry
 from collections import defaultdict
 from datetime import datetime
 from tabulate import tabulate
@@ -35,7 +34,6 @@ class Core:
         )
         self.resource_group = resource_group
 
-    @retry(stop_max_attempt_number=1, wait_fixed=10000)
     def get_usage(
         self,
         ago: int = constants.DEFAULT_AGO,
