@@ -5,7 +5,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 install_requires = [
     "tabulate",
     "click>=7.0",
-    "retrying",
     "azure-identity",
     "azure-mgmt-core",
     "azure-mgmt-costmanagement",
