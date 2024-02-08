@@ -6,6 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 from tabulate import tabulate
 import os
+import uuid
 
 from .logger import get_logger
 from . import constants
@@ -23,7 +24,11 @@ class Core:
     ):
         credential = DefaultAzureCredential()
         self.subscription_client = SubscriptionClient(credential=credential)
-        self.cost_management_client = CostManagementClient(credential=credential)
+        self.cost_management_client = CostManagementClient(
+            credential,
+            headers={"ClientType": str(uuid.uuid4())},
+            logging_enable=True,
+        )
         self.logger = get_logger(debug)
         self.granularity = granularity
         self.dimensions = dimensions
@@ -72,7 +77,6 @@ class Core:
         columns = list(map(lambda col: col.name, usage.columns))
         results = [dict(zip(columns, row)) for row in usage.rows]
         self.logger.debug(results)
-
         return total_results, results
 
     def convert_tabulate(self, total_results: list, results: list):
