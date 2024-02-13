@@ -84,6 +84,7 @@ class Core:
         view_format_date = "%Y-%m" if self.granularity == "MONTHLY" else "%Y-%m-%d"
         format_date = "%Y-%m-%dT%H:%M:%S" if self.granularity == "MONTHLY" else "%Y%m%d"
         date_key = "BillingMonth" if self.granularity == "MONTHLY" else "UsageDate"
+        currency = results[0].get("Currency")
 
         for result in total_results:
             d = datetime.strptime(str(result[date_key]), format_date).strftime(
@@ -105,7 +106,7 @@ class Core:
             key = raw_key.replace(f"/subscriptions/{self.subscription_id}", "")
             if self.resource_group is not None:
                 key = key.replace(f"/resourcegroups/{self.resource_group}", "")
-            d = {"key": key.replace(f"/subscriptions/{self.subscription_id}", "")}
+            d = {f"({currency})": key.replace(f"/subscriptions/{self.subscription_id}", "")}
             d.update(sum_costs)
             costs.append(d)
 
