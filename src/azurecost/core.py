@@ -110,7 +110,11 @@ class Core:
             key = raw_key.replace(f"/subscriptions/{self.subscription_id}", "")
             if self.resource_group is not None:
                 key = key.replace(f"/resourcegroups/{self.resource_group}", "")
-            d = {f"({currency})": key.replace(f"/subscriptions/{self.subscription_id}", "")}
+            d = {
+                f"({currency})": key.replace(
+                    f"/subscriptions/{self.subscription_id}", ""
+                )
+            }
             d.update(sum_costs)
             costs.append(d)
 
