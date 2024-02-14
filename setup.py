@@ -14,7 +14,7 @@ extras_require = {"test": ["tox"]}
 
 setup(
     name="azurecost",
-    version="0.1.7",
+    version="0.1.8",
     description="Simple and easy command line to view azure costs.",
     long_description=open(os.path.join(here, "README.md")).read(),
     long_description_content_type="text/markdown",

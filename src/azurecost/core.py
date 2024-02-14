@@ -44,7 +44,7 @@ class Core:
         ago: int = constants.DEFAULT_AGO,
     ):
         start, end = DateUtil.get_start_and_end(self.granularity, ago)
-        def_period = QueryTimePeriod(from_property=start, to=end)
+        time_period = QueryTimePeriod(from_property=start, to=end)
 
         scope = "/subscriptions/" + self.subscription_id
         if self.resource_group is not None:
@@ -53,7 +53,7 @@ class Core:
         payload = {
             "type": "ActualCost",
             "timeframe": "Custom",
-            "time_period": def_period,
+            "time_period": time_period,
             "dataset": {
                 "granularity": self.granularity,
                 "aggregation": {
@@ -64,19 +64,23 @@ class Core:
         self.logger.debug(f"{start} - {end}")
 
         # total_cost
+        self.logger.debug(f"time_period = {time_period}")
+        self.logger.debug(f"scope = {scope}")
+        self.logger.debug(f"payload = {payload}")
         usage = self.cost_management_client.query.usage(scope, payload)
         columns = list(map(lambda col: col.name, usage.columns))
         total_results = [dict(zip(columns, row)) for row in usage.rows]
-        self.logger.debug(total_results)
+        self.logger.debug(f"total_results = {total_results}")
 
         # cost by dimensions
         payload["dataset"]["grouping"] = [
             {"type": "Dimension", "name": d} for d in self.dimensions
         ]
+        self.logger.debug(f"payload = {payload}")
         usage = self.cost_management_client.query.usage(scope, payload)
         columns = list(map(lambda col: col.name, usage.columns))
         results = [dict(zip(columns, row)) for row in usage.rows]
-        self.logger.debug(results)
+        self.logger.debug(f"results = {results}")
         return total_results, results
 
     def convert_tabulate(self, total_results: list, results: list):
@@ -84,6 +88,7 @@ class Core:
         view_format_date = "%Y-%m" if self.granularity == "MONTHLY" else "%Y-%m-%d"
         format_date = "%Y-%m-%dT%H:%M:%S" if self.granularity == "MONTHLY" else "%Y%m%d"
         date_key = "BillingMonth" if self.granularity == "MONTHLY" else "UsageDate"
+        currency = results[0].get("Currency")
 
         for result in total_results:
             d = datetime.strptime(str(result[date_key]), format_date).strftime(
@@ -105,7 +110,11 @@ class Core:
             key = raw_key.replace(f"/subscriptions/{self.subscription_id}", "")
             if self.resource_group is not None:
                 key = key.replace(f"/resourcegroups/{self.resource_group}", "")
-            d = {"key": key.replace(f"/subscriptions/{self.subscription_id}", "")}
+            d = {
+                f"({currency})": key.replace(
+                    f"/subscriptions/{self.subscription_id}", ""
+                )
+            }
             d.update(sum_costs)
             costs.append(d)
 
