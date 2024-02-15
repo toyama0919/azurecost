@@ -29,6 +29,18 @@ Storage                  0          0
 
 * You can omit the -s by specifying the environment variable AZURE_SUBSCRIPTION_ID.
 
+```bash
+$ export AZURE_SUBSCRIPTION_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$ export AZURE_RESOURCE_GROUP=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$ azurecost
+key                   2023-08    2023-09
+------------------  ---------  ---------
+total                  492.77      80.28
+Cognitive Services     492.77      80.28
+Bandwidth                0          0
+Storage                  0          0
+```
+
 #### show cost (Multiple Dimensions)
 
 ```
