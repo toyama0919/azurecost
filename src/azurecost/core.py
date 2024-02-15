@@ -32,12 +32,12 @@ class Core:
         self.logger = get_logger(debug)
         self.granularity = granularity
         self.dimensions = dimensions
-        self.subscription_id = (
-            self._get_subscription_from_name(subscription_name).subscription_id
-            if os.environ.get("AZURE_SUBSCRIPTION_ID") is None
-            else os.environ.get("AZURE_SUBSCRIPTION_ID")
+        self.subscription_id = self._get_subscription_id(subscription_name)
+        self.resource_group = (
+            resource_group
+            if resource_group is not None
+            else os.environ.get("AZURE_RESOURCE_GROUP")
         )
-        self.resource_group = resource_group
 
     def get_usage(
         self,
@@ -129,8 +129,13 @@ class Core:
         )
         return tabulate(converts, headers="keys")
 
-    def _get_subscription_from_name(self, subscription_name: str):
-        for subscription in self.subscription_client.subscriptions.list():
-            if subscription.display_name != subscription_name:
-                continue
-            return subscription
+    def _get_subscription_id(self, subscription_name: str = None):
+        if subscription_name is not None:
+            for subscription in self.subscription_client.subscriptions.list():
+                if subscription.display_name != subscription_name:
+                    continue
+                return subscription.subscription_id
+        elif os.environ.get("AZURE_SUBSCRIPTION_ID") is not None:
+            return os.environ.get("AZURE_SUBSCRIPTION_ID")
+        else:
+            raise ValueError("subscription_name is required.")
