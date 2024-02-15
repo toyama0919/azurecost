@@ -33,9 +33,7 @@ class Core:
         self.dimensions = dimensions
         self.subscription_id = self._get_subscription_id(subscription_name)
         self.resource_group = (
-            resource_group
-            if resource_group
-            else os.environ.get("AZURE_RESOURCE_GROUP")
+            resource_group if resource_group else os.environ.get("AZURE_RESOURCE_GROUP")
         )
 
     def get_usage(
