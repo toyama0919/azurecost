@@ -22,10 +22,9 @@ class Core:
         subscription_name: str = None,
         resource_group: str = None,
     ):
-        credential = DefaultAzureCredential()
-        self.subscription_client = SubscriptionClient(credential=credential)
+        self.credential = DefaultAzureCredential()
         self.cost_management_client = CostManagementClient(
-            credential,
+            self.credential,
             headers={"ClientType": str(uuid.uuid4())},
             logging_enable=True,
         )
@@ -34,9 +33,7 @@ class Core:
         self.dimensions = dimensions
         self.subscription_id = self._get_subscription_id(subscription_name)
         self.resource_group = (
-            resource_group
-            if resource_group is not None
-            else os.environ.get("AZURE_RESOURCE_GROUP")
+            resource_group if resource_group else os.environ.get("AZURE_RESOURCE_GROUP")
         )
 
     def get_usage(
@@ -47,7 +44,7 @@ class Core:
         time_period = QueryTimePeriod(from_property=start, to=end)
 
         scope = "/subscriptions/" + self.subscription_id
-        if self.resource_group is not None:
+        if self.resource_group:
             scope += "/resourceGroups/" + self.resource_group
 
         payload = {
@@ -108,7 +105,7 @@ class Core:
         costs = []
         for raw_key, sum_costs in dd.items():
             key = raw_key.replace(f"/subscriptions/{self.subscription_id}", "")
-            if self.resource_group is not None:
+            if self.resource_group:
                 key = key.replace(f"/resourcegroups/{self.resource_group}", "")
             d = {
                 f"({currency})": key.replace(
@@ -130,12 +127,13 @@ class Core:
         return tabulate(converts, headers="keys")
 
     def _get_subscription_id(self, subscription_name: str = None):
-        if subscription_name is not None:
+        if subscription_name:
+            self.subscription_client = SubscriptionClient(credential=self.credential)
             for subscription in self.subscription_client.subscriptions.list():
                 if subscription.display_name != subscription_name:
                     continue
                 return subscription.subscription_id
-        elif os.environ.get("AZURE_SUBSCRIPTION_ID") is not None:
+        elif os.environ.get("AZURE_SUBSCRIPTION_ID"):
             return os.environ.get("AZURE_SUBSCRIPTION_ID")
         else:
-            raise ValueError("subscription_name is required.")
+            raise ValueError("Subscription name is required.")
