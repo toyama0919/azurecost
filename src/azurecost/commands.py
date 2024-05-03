@@ -27,7 +27,13 @@ class Mash(object):
     default=constants.DEFAULT_GRANULARITY,
     help="granularity.",
 )
-@click.option("--ago", "-a", type=int, default=constants.DEFAULT_AGO, help="ago.")
+@click.option(
+    "--ago",
+    "-a",
+    type=int,
+    default=constants.DEFAULT_AGO,
+    help="from_property ${ago} {MONTHLY|DAILY} ago. exp: 1 MONTH ago"
+)
 @click.option(
     "--version/--no-version", "-v", default=False, help="show version. (default: False)"
 )
