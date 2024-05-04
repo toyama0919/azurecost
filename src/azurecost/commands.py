@@ -32,7 +32,7 @@ class Mash(object):
     "-a",
     type=int,
     default=constants.DEFAULT_AGO,
-    help="from_property ${ago} {MONTHLY|DAILY} ago. exp: 1 MONTH ago"
+    help="from_property ${ago} {MONTHLY|DAILY} ago. exp: 1 MONTH ago",
 )
 @click.option(
     "--version/--no-version", "-v", default=False, help="show version. (default: False)"
