@@ -1,0 +1,42 @@
+[project]
+name = "azurecost"
+version = "0.4.0"
+description = "Simple and easy command line to view azure costs."
+authors = [{ name="Hiroshi Toyama", email="toyama0919@gmail.com" }]
+readme = "README.md"
+classifiers = [
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+keywords = [
+  "azure",
+  "cost",
+  "tool",
+  "costmanagement",
+]
+requires-python = ">=3.8"
+dependencies = [
+  "tabulate",
+  "click>=7.0",
+  "azure-identity",
+  "azure-mgmt-core",
+  "azure-mgmt-costmanagement",
+  "azure-mgmt-resource",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[project.optional-dependencies]
+test = [
+  "tox",
+]
+
+[project.scripts]
+azurecost = "azurecost.commands:main"
+
+[project.urls]
+"Homepage" = "https://github.com/toyama0919/azurecost"

@@ -1,6 +1,6 @@
-import pkg_resources
+from importlib.metadata import version
 
-VERSION = pkg_resources.get_distribution("azurecost").version
+VERSION = version("azurecost")
 
 DEFAULT_DIMENSIONS = ["ServiceName"]
 DEFAULT_GRANULARITY = "MONTHLY"
