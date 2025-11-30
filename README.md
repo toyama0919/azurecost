@@ -3,19 +3,36 @@
 [![PyPI version](https://badge.fury.io/py/azurecost.svg)](https://badge.fury.io/py/azurecost)
 [![Build Status](https://github.com/toyama0919/azurecost/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/toyama0919/azurecost/actions/workflows/ci.yml)
 
-Simple and easy command line to view azure costs.
+Simple and easy command line tool to view Azure costs.
 
-Supports python 3.8 and above.
+Supports Python 3.8 and above.
+
+## Installation
+
+```sh
+pip install azurecost
+```
 
 ## Settings
+
+You need to log in with Azure CLI.
 
 ```sh
 az login
 ```
 
-## Examples
+You can specify subscription ID and resource group via environment variables.
 
-#### show cost monthly
+```sh
+export AZURE_SUBSCRIPTION_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+export AZURE_RESOURCE_GROUP=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+## Usage
+
+### Basic Usage
+
+By default, it displays monthly costs aggregated by service name for the past 1 month.
 
 ```bash
 $ azurecost -s my-subscription
@@ -27,11 +44,10 @@ Bandwidth                0          0
 Storage                  0          0
 ```
 
-* You can omit the -s by specifying the environment variable AZURE_SUBSCRIPTION_ID.
+You can omit the `-s` option if you set the subscription ID via environment variable.
 
 ```bash
 $ export AZURE_SUBSCRIPTION_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-$ export AZURE_RESOURCE_GROUP=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 $ azurecost
 key                   2023-08    2023-09
 ------------------  ---------  ---------
@@ -41,9 +57,11 @@ Bandwidth                0          0
 Storage                  0          0
 ```
 
-#### show cost (Multiple Dimensions)
+### Multiple Dimensions
 
-```
+You can specify multiple dimensions with the `-d` option.
+
+```bash
 $ azurecost -s my-subscription -d ResourceGroup -d ServiceName
 key                                     2023-08    2023-09
 ------------------------------------  ---------  ---------
@@ -58,50 +76,95 @@ RG-7, Bandwidth                            0          0
 RG-7, Storage                              0          0
 ```
 
+### Daily Granularity
+
+Use `-g DAILY` to display daily costs.
+
+```bash
+$ azurecost -s my-subscription -g DAILY
+```
+
+### Specify Time Period
+
+Use the `-a` option to specify how many periods (months or days) ago to fetch data from.
+
+```bash
+# Fetch data from the past 3 months
+$ azurecost -s my-subscription -a 3
+```
+
+### Filter by Resource Group
+
+Use the `-r` option to filter by a specific resource group.
+
+```bash
+$ azurecost -s my-subscription -r my-resource-group
+```
+
+### Command Line Options
+
+| Option | Short | Description | Default |
+|--------|-------|-------------|---------|
+| `--subscription` | `-s` | Subscription display name | `AZURE_SUBSCRIPTION_ID` env var |
+| `--resource-group` | `-r` | Filter by resource group | `AZURE_RESOURCE_GROUP` env var |
+| `--dimensions` | `-d` | Aggregation dimensions (can specify multiple) | `ServiceName` |
+| `--granularity` | `-g` | Aggregation granularity (`MONTHLY`/`DAILY`) | `MONTHLY` |
+| `--ago` | `-a` | How many periods ago to fetch from | `1` |
+| `--debug` | - | Enable debug logging | `False` |
+| `--version` | `-v` | Show version | - |
+
+### Available Dimensions
+
+Examples of dimensions that can be specified with the `-d` option:
+
+- `ResourceGroup` - Resource group
+- `ServiceName` - Service name
+- `ResourceLocation` - Resource location
+- `MeterCategory` - Meter category
+- `ResourceType` - Resource type
+
+For other dimensions, refer to the Azure Cost Management API documentation.
+
 ## Python API
 
-```py
+You can also use it directly from Python code.
+
+```python
+from azurecost import Azurecost
+
 subscription = "my-subscription"
 core = Azurecost(
-    False,
-    "MONTHLY",
-    ["ServiceName"],
+    debug=False,
+    granularity="MONTHLY",
+    dimensions=["ServiceName"],
     subscription_name=subscription,
     # resource_group="my-rg"
 )
-total_results, results = core.get_usage(
-    ago=2,
-)
+total_results, results = core.get_usage(ago=2)
 text = core.convert_tabulate(total_results, results)
 print(text)
 ```
 
-## Installation
+## Development
 
-```sh
-pip install azurecost
-```
+### Setup Test Environment
 
-## CI
-
-### install test package
-
-```
+```bash
 $ ./scripts/ci.sh install
 ```
 
-### test
+### Run Tests
 
-```
+```bash
 $ ./scripts/ci.sh run-test
 ```
 
-flake8 and black and pytest.
+Runs tests with flake8, black, and pytest.
 
-### release pypi
+### Release to PyPI
 
-```
+```bash
 $ ./scripts/ci.sh release
 ```
 
-git tag and pypi release.
+Creates a git tag and releases to PyPI.
