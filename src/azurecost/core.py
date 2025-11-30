@@ -28,8 +28,14 @@ class Core:
         self.credential = credential or DefaultAzureCredential()
         self.cost_management_client = cost_management_client or CostManagementClient(
             self.credential,
+            # ClientType header with unique UUID is required to prevent "429 Too Many Requests" errors.
+            # Azure Cost Management API tracks clients by this header. Without a unique identifier,
+            # multiple requests from the same client instance are treated as a single client,
+            # causing rate limiting to be applied more aggressively and leading to 429 errors.
+            # By using a unique UUID per client instance, each instance is tracked separately,
+            # allowing rate limits to be distributed across instances rather than concentrated on one.
             headers={"ClientType": str(uuid.uuid4())},
-            logging_enable=True,
+            logging_enable=True,  # Enable request/response logging for debugging
         )
         self._subscription_client = subscription_client
         self.logger = get_logger(debug)
