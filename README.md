@@ -132,18 +132,37 @@ You can also use it directly from Python code.
 ```python
 from azurecost import Azurecost
 
-subscription = "my-subscription"
+# Required parameter
 core = Azurecost(
-    debug=False,
-    granularity="MONTHLY",
-    dimensions=["ServiceName"],
-    subscription_name=subscription,
-    # resource_group="my-rg"
+    debug=False,  # Required: Enable debug logging
+    # Optional parameters
+    granularity="MONTHLY",  # Optional: "MONTHLY" or "DAILY" (default: "MONTHLY")
+    dimensions=["ServiceName"],  # Optional: List of dimensions (default: ["ServiceName"])
+    subscription_name="my-subscription",  # Optional: Subscription display name (or use AZURE_SUBSCRIPTION_ID env var)
+    resource_group="my-rg",  # Optional: Resource group filter (or use AZURE_RESOURCE_GROUP env var)
+    # Advanced options (for testing/customization)
+    # credential=None,  # Optional: Azure credential object (default: DefaultAzureCredential())
+    # cost_management_client=None,  # Optional: CostManagementClient instance (for testing)
+    # subscription_client=None,  # Optional: SubscriptionClient instance (for testing)
 )
-total_results, results = core.get_usage(ago=2)
+
+total_results, results = core.get_usage(ago=2)  # ago: number of periods to fetch (default: 1)
 text = core.convert_tabulate(total_results, results)
 print(text)
 ```
+
+### Python API Parameters
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `debug` | `bool` | Yes | - | Enable debug logging |
+| `granularity` | `str` | No | `"MONTHLY"` | Aggregation granularity: `"MONTHLY"` or `"DAILY"` |
+| `dimensions` | `list[str]` | No | `["ServiceName"]` | List of dimensions for aggregation |
+| `subscription_name` | `str` | No | `None` | Subscription display name (or use `AZURE_SUBSCRIPTION_ID` env var) |
+| `resource_group` | `str` | No | `None` | Resource group filter (or use `AZURE_RESOURCE_GROUP` env var) |
+| `credential` | `object` | No | `None` | Azure credential object (default: `DefaultAzureCredential()`) |
+| `cost_management_client` | `object` | No | `None` | `CostManagementClient` instance (mainly for testing) |
+| `subscription_client` | `object` | No | `None` | `SubscriptionClient` instance (mainly for testing) |
 
 ## Development
 
