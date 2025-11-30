@@ -105,13 +105,13 @@ $ azurecost -s my-subscription -r my-resource-group
 
 | Option | Short | Description | Default |
 |--------|-------|-------------|---------|
-| `--subscription` | `-s` | Subscription display name | `AZURE_SUBSCRIPTION_ID` env var |
-| `--resource-group` | `-r` | Filter by resource group | `AZURE_RESOURCE_GROUP` env var |
-| `--dimensions` | `-d` | Aggregation dimensions (can specify multiple) | `ServiceName` |
-| `--granularity` | `-g` | Aggregation granularity (`MONTHLY`/`DAILY`) | `MONTHLY` |
-| `--ago` | `-a` | How many periods ago to fetch from | `1` |
-| `--debug` | - | Enable debug logging | `False` |
-| `--version` | `-v` | Show version | - |
+| `--subscription` | `-s` | Azure subscription display name. Can be omitted if `AZURE_SUBSCRIPTION_ID` environment variable is set. | `AZURE_SUBSCRIPTION_ID` env var |
+| `--resource-group` | `-r` | Filter costs by a specific resource group. Can be omitted if `AZURE_RESOURCE_GROUP` environment variable is set. | `AZURE_RESOURCE_GROUP` env var |
+| `--dimensions` | `-d` | Dimensions to aggregate costs by (e.g., ResourceGroup, ServiceName). Can be specified multiple times. | `ServiceName` |
+| `--granularity` | `-g` | Time granularity for cost aggregation. Use `MONTHLY` for monthly costs or `DAILY` for daily costs. | `MONTHLY` |
+| `--ago` | `-a` | Number of periods (months for MONTHLY, days for DAILY) to look back from today. For example, use 3 to get the past 3 months. | `1` |
+| `--debug` | - | Enable debug logging to see detailed request/response information. | `False` |
+| `--version` | `-v` | Display the version number and exit. | - |
 
 ### Available Dimensions
 
