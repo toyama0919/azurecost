@@ -221,7 +221,9 @@ class TestCoreGetSubscriptionId:
         mock_subscription_client = Mock()
         mock_subscription_client.subscriptions.list.return_value = [mock_subscription]
 
-        with pytest.raises(ValueError, match="Subscription 'non-existent-subscription' not found"):
+        with pytest.raises(
+            ValueError, match="Subscription 'non-existent-subscription' not found"
+        ):
             Core(
                 False,
                 subscription_name="non-existent-subscription",

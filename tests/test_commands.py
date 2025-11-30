@@ -61,9 +61,7 @@ def test_cli_with_resource_group(mock_core_class, runner):
     mock_core.convert_tabulate.return_value = "test output"
     mock_core_class.return_value = mock_core
 
-    result = runner.invoke(
-        commands.cli, ["-s", "test-subscription", "-r", "test-rg"]
-    )
+    result = runner.invoke(commands.cli, ["-s", "test-subscription", "-r", "test-rg"])
     assert result.exit_code == 0
     call_args = mock_core_class.call_args
     # Core(debug, granularity, dimensions, subscription, resource_group)
