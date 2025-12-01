@@ -36,7 +36,7 @@ By default, it displays monthly costs aggregated by service name for the past 1 
 
 ```bash
 $ azurecost -s my-subscription
-key                   2023-08    2023-09
+(JPY)                 2023-08    2023-09
 ------------------  ---------  ---------
 total                  492.77      80.28
 Cognitive Services     492.77      80.28
@@ -49,7 +49,7 @@ You can omit the `-s` option if you set the subscription ID via environment vari
 ```bash
 $ export AZURE_SUBSCRIPTION_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 $ azurecost
-key                   2023-08    2023-09
+(JPY)                 2023-08    2023-09
 ------------------  ---------  ---------
 total                  492.77      80.28
 Cognitive Services     492.77      80.28
@@ -57,13 +57,15 @@ Bandwidth                0          0
 Storage                  0          0
 ```
 
+**Note:** The currency unit (e.g., `(JPY)`, `(USD)`, `(EUR)`) is automatically determined by your Azure subscription's billing currency settings.
+
 ### Multiple Dimensions
 
 You can specify multiple dimensions with the `-d` option.
 
 ```bash
 $ azurecost -s my-subscription -d ResourceGroup -d ServiceName
-key                                     2023-08    2023-09
+(JPY)                                     2023-08    2023-09
 ------------------------------------  ---------  ---------
 total                                    492.77     426.97
 RG-1, Cognitive Services                 281        366
@@ -112,6 +114,23 @@ $ azurecost -s my-subscription -r my-resource-group
 | `--ago` | `-a` | Number of periods (months for MONTHLY, days for DAILY) to look back from today. For example, use 3 to get the past 3 months. | `1` |
 | `--debug` | - | Enable debug logging to see detailed request/response information. | `False` |
 | `--version` | `-v` | Display the version number and exit. | - |
+
+### Currency Display
+
+The currency unit displayed in the output (e.g., JPY, USD, EUR) is determined by your Azure subscription's billing currency settings. The tool automatically retrieves the currency information from the Azure Cost Management API response and displays it in the output.
+
+**Example output with currency:**
+```bash
+$ azurecost -s my-subscription
+(JPY)                 2023-08    2023-09
+------------------  ---------  ---------
+total                  492.77      80.28
+Cognitive Services     492.77      80.28
+```
+
+The currency is shown in the first column header (e.g., `(JPY)`, `(USD)`, `(EUR)`). This currency matches what you see in the Azure Portal's Cost Analysis view for your subscription.
+
+**Note:** The currency cannot be changed via command-line options as it is determined by your Azure billing account settings. If you need to view costs in a different currency, you would need to change the billing currency in your Azure billing account settings.
 
 ### Available Dimensions
 
