@@ -142,7 +142,9 @@ class Core:
     def _get_subscription_id(self, subscription_name: str = None):
         if subscription_name:
             if self._subscription_client is None:
-                self._subscription_client = SubscriptionClient(credential=self.credential)
+                self._subscription_client = SubscriptionClient(
+                    credential=self.credential
+                )
             for subscription in self._subscription_client.subscriptions.list():
                 if subscription.display_name != subscription_name:
                     continue
