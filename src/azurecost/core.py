@@ -21,13 +21,23 @@ class Core:
         dimensions: list = constants.DEFAULT_DIMENSIONS,
         subscription_name: str = None,
         resource_group: str = None,
+        credential=None,
+        cost_management_client=None,
+        subscription_client=None,
     ):
-        self.credential = DefaultAzureCredential()
-        self.cost_management_client = CostManagementClient(
+        self.credential = credential or DefaultAzureCredential()
+        self.cost_management_client = cost_management_client or CostManagementClient(
             self.credential,
+            # ClientType header with unique UUID is required to prevent "429 Too Many Requests" errors.
+            # Azure Cost Management API tracks clients by this header. Without a unique identifier,
+            # multiple requests from the same client instance are treated as a single client,
+            # causing rate limiting to be applied more aggressively and leading to 429 errors.
+            # By using a unique UUID per client instance, each instance is tracked separately,
+            # allowing rate limits to be distributed across instances rather than concentrated on one.
             headers={"ClientType": str(uuid.uuid4())},
-            logging_enable=True,
+            logging_enable=True,  # Enable request/response logging for debugging
         )
+        self._subscription_client = subscription_client
         self.logger = get_logger(debug)
         self.granularity = granularity
         self.dimensions = dimensions
@@ -85,7 +95,7 @@ class Core:
         view_format_date = "%Y-%m" if self.granularity == "MONTHLY" else "%Y-%m-%d"
         format_date = "%Y-%m-%dT%H:%M:%S" if self.granularity == "MONTHLY" else "%Y%m%d"
         date_key = "BillingMonth" if self.granularity == "MONTHLY" else "UsageDate"
-        currency = results[0].get("Currency")
+        currency = results[0].get("Currency") if results else "USD"
 
         for result in total_results:
             d = datetime.strptime(str(result[date_key]), format_date).strftime(
@@ -115,6 +125,9 @@ class Core:
             d.update(sum_costs)
             costs.append(d)
 
+        if not costs:
+            return "No data available."
+
         # Get the most recent month
         last_time = list(costs[0].keys())[-1]
 
@@ -128,11 +141,13 @@ class Core:
 
     def _get_subscription_id(self, subscription_name: str = None):
         if subscription_name:
-            self.subscription_client = SubscriptionClient(credential=self.credential)
-            for subscription in self.subscription_client.subscriptions.list():
+            if self._subscription_client is None:
+                self._subscription_client = SubscriptionClient(credential=self.credential)
+            for subscription in self._subscription_client.subscriptions.list():
                 if subscription.display_name != subscription_name:
                     continue
                 return subscription.subscription_id
+            raise ValueError(f"Subscription '{subscription_name}' not found.")
         elif os.environ.get("AZURE_SUBSCRIPTION_ID"):
             return os.environ.get("AZURE_SUBSCRIPTION_ID")
         else:
