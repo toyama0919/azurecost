@@ -1,8 +1,7 @@
 import pytest
 import os
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock, patch
 from azurecost.core import Core
-from azurecost import constants
 
 
 class TestCoreConvertTabulate:

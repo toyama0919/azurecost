@@ -1,4 +1,3 @@
-import pytest
 from datetime import datetime, timezone
 from azurecost.date_util import DateUtil
 
