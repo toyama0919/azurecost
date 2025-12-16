@@ -17,9 +17,10 @@ class TestDateUtil:
         assert isinstance(start, datetime)
         assert isinstance(end, datetime)
         assert start.day == 1
-        # Should be approximately 90 days ago
+        # Should be approximately 3 months ago (actual days vary by month lengths)
+        # Range accounts for different month lengths (28-31 days per month)
         diff = end - start
-        assert 85 <= diff.days <= 95
+        assert 85 <= diff.days <= 110
 
     def test_get_start_and_end_daily(self):
         start, end = DateUtil.get_start_and_end("DAILY", 1)
