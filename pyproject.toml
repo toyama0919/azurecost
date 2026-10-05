@@ -1,6 +1,6 @@
 [project]
 name = "azurecost"
-version = "0.4.0"
+version = "0.5.0"
 description = "Simple and easy command line to view azure costs."
 authors = [{ name="Hiroshi Toyama", email="toyama0919@gmail.com" }]
 readme = "README.md"
