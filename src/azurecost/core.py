@@ -1,7 +1,18 @@
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.resource import SubscriptionClient
+
+# SubscriptionClient moved out of the azure.mgmt.resource top level in
+# azure-mgmt-resource 25.0.0, where it was split into the separate
+# azure-mgmt-resource-subscriptions distribution. The azure.mgmt.resource.subscriptions
+# path works on both the older bundled layout and the new split one.
+from azure.mgmt.resource.subscriptions import SubscriptionClient
 from azure.mgmt.costmanagement import CostManagementClient
-from azure.mgmt.costmanagement.models import QueryTimePeriod
+from azure.mgmt.costmanagement.models import (
+    QueryAggregation,
+    QueryDataset,
+    QueryDefinition,
+    QueryGrouping,
+    QueryTimePeriod,
+)
 from collections import defaultdict
 from datetime import datetime
 from tabulate import tabulate
@@ -57,38 +68,51 @@ class Core:
         if self.resource_group:
             scope += "/resourceGroups/" + self.resource_group
 
-        payload = {
-            "type": "ActualCost",
-            "timeframe": "Custom",
-            "time_period": time_period,
-            "dataset": {
-                "granularity": self.granularity,
-                "aggregation": {
-                    "totalCost": {"name": "Cost", "function": "Sum"},
-                },
-            },
-        }
         self.logger.debug(f"{start} - {end}")
-
-        # total_cost
         self.logger.debug(f"time_period = {time_period}")
         self.logger.debug(f"scope = {scope}")
-        self.logger.debug(f"payload = {payload}")
-        usage = self.cost_management_client.query.usage(scope, payload)
+
+        # total_cost
+        total_query = self._build_query(time_period)
+        self.logger.debug(f"total_query = {total_query}")
+        usage = self.cost_management_client.query.usage(scope, total_query)
         columns = list(map(lambda col: col.name, usage.columns))
         total_results = [dict(zip(columns, row)) for row in usage.rows]
         self.logger.debug(f"total_results = {total_results}")
 
         # cost by dimensions
-        payload["dataset"]["grouping"] = [
-            {"type": "Dimension", "name": d} for d in self.dimensions
-        ]
-        self.logger.debug(f"payload = {payload}")
-        usage = self.cost_management_client.query.usage(scope, payload)
+        dimension_query = self._build_query(
+            time_period,
+            grouping=[QueryGrouping(type="Dimension", name=d) for d in self.dimensions],
+        )
+        self.logger.debug(f"dimension_query = {dimension_query}")
+        usage = self.cost_management_client.query.usage(scope, dimension_query)
         columns = list(map(lambda col: col.name, usage.columns))
         results = [dict(zip(columns, row)) for row in usage.rows]
         self.logger.debug(f"results = {results}")
         return total_results, results
+
+    def _build_query(self, time_period: QueryTimePeriod, grouping: list = None):
+        """Build a QueryDefinition for the cost management query API.
+
+        The payload is built from the SDK models rather than a plain dict because
+        azure-mgmt-costmanagement 5.0.0 stopped translating snake_case keys of a raw
+        dict, which made the server reject the request with
+        "Invalid query definition: Valid TimePeriod with range not exceeding one year
+        must be present."
+        """
+        return QueryDefinition(
+            type="ActualCost",
+            timeframe="Custom",
+            time_period=time_period,
+            dataset=QueryDataset(
+                granularity=self.granularity,
+                aggregation={
+                    "totalCost": QueryAggregation(name="Cost", function="Sum")
+                },
+                grouping=grouping,
+            ),
+        )
 
     def convert_tabulate(self, total_results: list, results: list):
         dd = defaultdict(lambda: {})

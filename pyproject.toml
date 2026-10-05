@@ -25,6 +25,11 @@ dependencies = [
   "azure-mgmt-core",
   "azure-mgmt-costmanagement",
   "azure-mgmt-resource",
+  # azure-mgmt-resource 25.0.0 split SubscriptionClient out into its own
+  # distribution. It requires Python 3.10+, which is also the floor of the
+  # azure-mgmt-resource releases that need it, so older interpreters keep
+  # resolving to a release that still bundles SubscriptionClient.
+  "azure-mgmt-resource-subscriptions; python_version >= '3.10'",
 ]
 
 [tool.setuptools]
