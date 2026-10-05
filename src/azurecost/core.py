@@ -1,9 +1,7 @@
 from azure.identity import DefaultAzureCredential
 
-# SubscriptionClient moved out of the azure.mgmt.resource top level in
-# azure-mgmt-resource 25.0.0, where it was split into the separate
-# azure-mgmt-resource-subscriptions distribution. The azure.mgmt.resource.subscriptions
-# path works on both the older bundled layout and the new split one.
+# Provided by azure-mgmt-resource-subscriptions, which azure-mgmt-resource 25.0.0
+# split SubscriptionClient out into.
 from azure.mgmt.resource.subscriptions import SubscriptionClient
 from azure.mgmt.costmanagement import CostManagementClient
 from azure.mgmt.costmanagement.models import (
@@ -96,10 +94,10 @@ class Core:
         """Build a QueryDefinition for the cost management query API.
 
         The payload is built from the SDK models rather than a plain dict because
-        azure-mgmt-costmanagement 5.0.0 stopped translating snake_case keys of a raw
-        dict, which made the server reject the request with
-        "Invalid query definition: Valid TimePeriod with range not exceeding one year
-        must be present."
+        azure-mgmt-costmanagement 5.0.0 no longer translates the snake_case keys of a
+        raw dict, which makes the server reject the request with "Invalid query
+        definition: Valid TimePeriod with range not exceeding one year must be
+        present."
         """
         return QueryDefinition(
             type="ActualCost",

@@ -5,11 +5,11 @@ description = "Simple and easy command line to view azure costs."
 authors = [{ name="Hiroshi Toyama", email="toyama0919@gmail.com" }]
 readme = "README.md"
 classifiers = [
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 keywords = [
   "azure",
@@ -17,19 +17,16 @@ keywords = [
   "tool",
   "costmanagement",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
   "tabulate",
   "click>=7.0",
   "azure-identity",
   "azure-mgmt-core",
-  "azure-mgmt-costmanagement",
-  "azure-mgmt-resource",
-  # azure-mgmt-resource 25.0.0 split SubscriptionClient out into its own
-  # distribution. It requires Python 3.10+, which is also the floor of the
-  # azure-mgmt-resource releases that need it, so older interpreters keep
-  # resolving to a release that still bundles SubscriptionClient.
-  "azure-mgmt-resource-subscriptions; python_version >= '3.10'",
+  "azure-mgmt-costmanagement>=5",
+  "azure-mgmt-resource>=25",
+  # SubscriptionClient lives here since azure-mgmt-resource 25.0.0 split it out.
+  "azure-mgmt-resource-subscriptions",
 ]
 
 [tool.setuptools]
