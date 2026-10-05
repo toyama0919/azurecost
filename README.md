@@ -5,7 +5,7 @@
 
 Simple and easy command line tool to view Azure costs.
 
-Supports Python 3.8 and above.
+Supports Python 3.10 and above.
 
 ## Installation
 
